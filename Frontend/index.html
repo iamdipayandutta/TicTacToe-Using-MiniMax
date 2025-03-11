@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Tic Tac Toe</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="status" id="status">Player X's turn</div>
+    
+    <div class="game" id="board">
+        <!-- Cells generated dynamically for better scalability -->
+        <script>
+            for (let i = 0; i < 9; i++) {
+                document.write(`<div class="cell" data-index="${i}"></div>`);
+            }
+        </script>
+    </div>
+     <!--scoreboard -->
+     <div class="scoreboard">
+        <h2>Scoreboard</h2>
+        <div class="scores">
+            <div class="player-score">
+                <span class="player-label">X</span>
+                <span id="scoreX" class="score">0</span>
+            </div>
+            <div class="player-score">
+                <span class="player-label">O</span>
+                <span id="scoreO" class="score">0</span>
+            </div>
+        </div>
+    </div>
+    
+    
+    <button class="reset" onclick="resetGame()">Reset Game</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
