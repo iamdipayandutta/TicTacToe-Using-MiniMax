@@ -32,7 +32,7 @@ This project is a **Tic Tac Toe game** with an AI opponent powered by the **Mini
 
 ## Gameplay Showcase
 
-[![showcase](Showcase.gif)]
+![Gameplay Demonstration](Recording 2025-03-26 113736.gif)
 
 ---
 
