@@ -1,76 +1,81 @@
 const board = document.getElementById("board");
 const cells = document.querySelectorAll(".cell");
 const status = document.getElementById("status");
-const winPatterns = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-];
+const API_URL = "http://localhost:8080";
 
-let currentPlayer = "X";
-let gameState = ["", "", "", "", "", "", "", "", ""];
-let gameActive = true;
+let gameState = {
+    board: ["", "", "", "", "", "", "", "", ""],
+    turn: "X",
+    winner: null
+};
 
+// Update UI based on game state
+function updateUI() {
+    cells.forEach((cell, index) => {
+        cell.textContent = gameState.board[index];
+        cell.classList.remove("winning");
+    });
+
+    if (gameState.winner) {
+        status.textContent = `Player ${gameState.winner} Wins!`;
+    } else if (!gameState.board.includes("")) {
+        status.textContent = "It's a Draw!";
+    } else {
+        status.textContent = `Player ${gameState.turn}'s turn`;
+    }
+}
+
+// Handle cell click
+async function handleCellClick(index) {
+    if (gameState.winner || gameState.board[index] !== "") return;
+
+    try {
+        const response = await fetch(`${API_URL}/move`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ index: index })
+        });
+
+        if (!response.ok) throw new Error('Invalid move');
+        
+        gameState = await response.json();
+        updateUI();
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Reset game
+async function resetGame() {
+    try {
+        const response = await fetch(`${API_URL}/reset`, {
+            method: 'POST'
+        });
+        gameState = await response.json();
+        updateUI();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Initialize game
+async function initGame() {
+    try {
+        const response = await fetch(`${API_URL}/state`);
+        gameState = await response.json();
+        updateUI();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Add click handlers
 cells.forEach((cell, index) => {
-    cell.addEventListener("click", () => handleCellClick(cell, index));
+    cell.addEventListener("click", () => handleCellClick(index));
 });
 
-function handleCellClick(cell, index) {
-    if (gameState[index] !== "" || !gameActive) return;
-
-    gameState[index] = currentPlayer;
-    cell.textContent = currentPlayer;
-    cell.classList.add("animated");
-
-    if (checkWin()) {
-        status.textContent = `Player ${currentPlayer} Wins!`;
-        highlightWinningCells();
-        gameActive = false;
-        return;
-    }
-
-    if (!gameState.includes("")) {
-        status.textContent = "It's a Draw!";
-        gameActive = false;
-        return;
-    }
-
-    currentPlayer = currentPlayer === "X" ? "O" : "X";
-    status.textContent = `Player ${currentPlayer}'s turn`;
-}
-
-function checkWin() {
-    return winPatterns.some(pattern => {
-        const [a, b, c] = pattern;
-        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            cells[a].classList.add("winning");
-            cells[b].classList.add("winning");
-            cells[c].classList.add("winning");
-            return true;
-        }
-        return false;
-    });
-}
-
-function highlightWinningCells() {
-    winPatterns.forEach(pattern => {
-        const [a, b, c] = pattern;
-        if (gameState[a] && gameState[a] === gameState[b] && gameState[a] === gameState[c]) {
-            cells[a].classList.add("winning");
-            cells[b].classList.add("winning");
-            cells[c].classList.add("winning");
-        }
-    });
-}
-
-function resetGame() {
-    gameState = ["", "", "", "", "", "", "", "", ""];
-    gameActive = true;
-    currentPlayer = "X";
-    status.textContent = "Player X's turn";
-    
-    cells.forEach(cell => {
-        cell.textContent = "";
-        cell.classList.remove("winning", "animated");
-    });
-}
+// Initialize the game
+initGame();
