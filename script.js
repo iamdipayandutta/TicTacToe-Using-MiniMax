@@ -9,7 +9,6 @@ let gameState = {
     winner: null
 };
 
-// Update UI based on game state
 function updateUI() {
     cells.forEach((cell, index) => {
         cell.textContent = gameState.board[index];
@@ -25,7 +24,6 @@ function updateUI() {
     }
 }
 
-// Handle cell click
 async function handleCellClick(index) {
     if (gameState.winner || gameState.board[index] !== "") return;
 
@@ -48,7 +46,6 @@ async function handleCellClick(index) {
     }
 }
 
-// Reset game
 async function resetGame() {
     try {
         const response = await fetch(`${API_URL}/reset`, {
@@ -61,7 +58,6 @@ async function resetGame() {
     }
 }
 
-// Initialize game
 async function initGame() {
     try {
         const response = await fetch(`${API_URL}/state`);
@@ -72,10 +68,8 @@ async function initGame() {
     }
 }
 
-// Add click handlers
 cells.forEach((cell, index) => {
     cell.addEventListener("click", () => handleCellClick(index));
 });
 
-// Initialize the game
 initGame();

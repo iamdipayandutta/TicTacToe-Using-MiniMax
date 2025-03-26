@@ -156,13 +156,11 @@ body {
     transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-/* Score animation when updated */
 .score-animate {
     transform: scale(1.5);
     color: yellow;
 }
 
-/* Fade-in animation for scoreboard */
 @keyframes fadeIn {
     from {
         opacity: 0;
