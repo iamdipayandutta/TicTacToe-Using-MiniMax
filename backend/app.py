@@ -4,7 +4,13 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-game_state = {"board": ["" for _ in range(9)], "turn": "X", "winner": None}
+# Add scoreboard tracking
+game_state = {
+    "board": ["" for _ in range(9)], 
+    "turn": "X", 
+    "winner": None,
+    "scores": {"X": 0, "O": 0, "ties": 0}  # Add scores tracking
+}
 
 def check_winner(board):
     win_conditions = [
@@ -84,11 +90,21 @@ def make_move():
     game_state["board"][index] = game_state["turn"]
     game_state["winner"] = check_winner(game_state["board"])
 
+    # Update scores if there's a winner
+    if game_state["winner"]:
+        game_state["scores"][game_state["winner"]] += 1
+    elif "" not in game_state["board"]:  # Check for tie
+        game_state["scores"]["ties"] += 1
+
     if game_state["winner"] is None and "" in game_state["board"]:
         game_state["turn"] = "O"
         ai_move = find_best_move(game_state["board"])
         game_state["board"][ai_move] = "O"
         game_state["winner"] = check_winner(game_state["board"])
+        if game_state["winner"]:  # Check if AI won
+            game_state["scores"][game_state["winner"]] += 1
+        elif "" not in game_state["board"]:  # Check for tie after AI move
+            game_state["scores"]["ties"] += 1
         game_state["turn"] = "X"
     
     return jsonify(game_state)
@@ -96,7 +112,20 @@ def make_move():
 @app.route("/reset", methods=["POST"])
 def reset_game():
     global game_state
-    game_state = {"board": ["" for _ in range(9)], "turn": "X", "winner": None}
+    # Keep the scores when resetting the game
+    current_scores = game_state["scores"]
+    game_state = {
+        "board": ["" for _ in range(9)], 
+        "turn": "X", 
+        "winner": None,
+        "scores": current_scores
+    }
+    return jsonify(game_state)
+
+@app.route("/reset-scores", methods=["POST"])
+def reset_scores():
+    global game_state
+    game_state["scores"] = {"X": 0, "O": 0, "ties": 0}
     return jsonify(game_state)
 
 @app.route("/state", methods=["GET"])

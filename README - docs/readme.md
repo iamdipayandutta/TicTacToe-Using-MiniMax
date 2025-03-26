@@ -30,6 +30,12 @@ This project is a **Tic Tac Toe game** with an AI opponent powered by the **Mini
 
 ---
 
+## Gameplay Showcase
+
+![Gameplay Demonstration](README%20-%20docs/Gameplay%20Showcase.gif)
+
+---
+
 ## API Endpoints
 
 ### **1. `/move` (POST)**

@@ -6,7 +6,8 @@ const API_URL = "http://localhost:8080";
 let gameState = {
     board: ["", "", "", "", "", "", "", "", ""],
     turn: "X",
-    winner: null
+    winner: null,
+    scores: { X: 0, O: 0 }
 };
 
 function updateUI() {
@@ -15,8 +16,16 @@ function updateUI() {
         cell.classList.remove("winning");
     });
 
+    // Update scoreboard
+    document.getElementById("scoreX").textContent = gameState.scores.X;
+    document.getElementById("scoreO").textContent = gameState.scores.O;
+
     if (gameState.winner) {
         status.textContent = `Player ${gameState.winner} Wins!`;
+        // Add animation to score when updated
+        const winnerScore = document.getElementById(`score${gameState.winner}`);
+        winnerScore.classList.add("score-animate");
+        setTimeout(() => winnerScore.classList.remove("score-animate"), 1000);
     } else if (!gameState.board.includes("")) {
         status.textContent = "It's a Draw!";
     } else {
@@ -49,6 +58,19 @@ async function handleCellClick(index) {
 async function resetGame() {
     try {
         const response = await fetch(`${API_URL}/reset`, {
+            method: 'POST'
+        });
+        gameState = await response.json();
+        updateUI();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Add reset scores function
+async function resetScores() {
+    try {
+        const response = await fetch(`${API_URL}/reset-scores`, {
             method: 'POST'
         });
         gameState = await response.json();
