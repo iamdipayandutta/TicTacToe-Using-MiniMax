@@ -32,16 +32,7 @@ This project is a **Tic Tac Toe game** with an AI opponent powered by the **Mini
 
 ## Gameplay Showcase
 
-![Gameplay Demonstration](README%20-%20docs/Gameplay%20Showcase.gif)
+![Gameplay Demonstration](attachments\Showcase.gif)
 
 ---
 
-## API Endpoints
-
-### **1. `/move` (POST)**
-- **Description**: Handles the player's move and triggers the AI's move.
-- **Request Body**:
-  ```json
-  {
-    "index": <integer> 
-  }
